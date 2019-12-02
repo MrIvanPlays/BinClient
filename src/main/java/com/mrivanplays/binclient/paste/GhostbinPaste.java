@@ -25,8 +25,7 @@ package com.mrivanplays.binclient.paste;
 /**
  * Represents a paste, created under the ghostbin package.
  */
-public interface GhostbinPaste extends Paste
-{
+public interface GhostbinPaste extends Paste {
 
     /**
      * Returns the language of the code in the bin.
@@ -52,14 +51,12 @@ public interface GhostbinPaste extends Paste
     /**
      * Represents a language
      */
-    final class Language
-    {
+    final class Language {
 
         private String name;
         private String id;
 
-        public Language(String name, String id)
-        {
+        public Language(String name, String id) {
             this.name = name;
             this.id = id;
         }
@@ -67,16 +64,14 @@ public interface GhostbinPaste extends Paste
         /**
          * @return the name of the language
          */
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
         /**
          * @return language id
          */
-        public String getId()
-        {
+        public String getId() {
             return id;
         }
     }

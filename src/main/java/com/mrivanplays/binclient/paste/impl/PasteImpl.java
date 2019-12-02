@@ -24,35 +24,30 @@ package com.mrivanplays.binclient.paste.impl;
 
 import com.mrivanplays.binclient.paste.Paste;
 
-public class PasteImpl implements Paste
-{
+public class PasteImpl implements Paste {
 
     private String id;
     private String body;
     private String url;
 
-    public PasteImpl(String id, String body, String url)
-    {
+    public PasteImpl(String id, String body, String url) {
         this.id = id;
         this.body = body;
         this.url = url;
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
     @Override
-    public String getBody()
-    {
+    public String getBody() {
         return body;
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 }

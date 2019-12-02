@@ -25,48 +25,49 @@ package com.mrivanplays.binclient.servers;
 import com.mrivanplays.binclient.paste.GhostbinPaste;
 import com.mrivanplays.binclient.paste.impl.GhostbinPasteImpl;
 import com.mrivanplays.binclient.request.RestRequest;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import okhttp3.*;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+
+import okhttp3.Dispatcher;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * Represents a bin server, ran under the ghostbin package
  */
-public final class GhostbinServer
-{
+public final class GhostbinServer {
 
     private OkHttpClient client;
     private String defaultExpiryTime;
     private String baseUrl;
     private final String userAgent;
 
-    public GhostbinServer(String defaultExpiryTime)
-    {
+    public GhostbinServer(String defaultExpiryTime) {
         this(defaultExpiryTime, "https://paste.menudocs.org/");
     }
 
-    public GhostbinServer(String defaultExpiryTime, String baseUrl)
-    {
+    public GhostbinServer(String defaultExpiryTime, String baseUrl) {
         this(new OkHttpClient(), defaultExpiryTime, baseUrl);
     }
 
-    public GhostbinServer(ExecutorService executor, String defaultExpiryTime)
-    {
+    public GhostbinServer(ExecutorService executor, String defaultExpiryTime) {
         this(executor, defaultExpiryTime, "https://paste.menudocs.org/");
     }
 
-    public GhostbinServer(ExecutorService executor, String defaultExpiryTime, String baseUrl)
-    {
+    public GhostbinServer(ExecutorService executor, String defaultExpiryTime, String baseUrl) {
         this(new OkHttpClient.Builder().dispatcher(new Dispatcher(executor)).build(), defaultExpiryTime, baseUrl);
     }
 
-    public GhostbinServer(OkHttpClient client, String defaultExpiryTime, String baseUrl)
-    {
+    public GhostbinServer(OkHttpClient client, String defaultExpiryTime, String baseUrl) {
         this.client = client;
         this.userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
         this.defaultExpiryTime = defaultExpiryTime;
@@ -76,25 +77,23 @@ public final class GhostbinServer
     /**
      * Creates a new paste
      *
-     * @param code code
+     * @param code     code
      * @param language language id
      * @return rest request
      */
-    public RestRequest<String> createPaste(String code, String language)
-    {
+    public RestRequest<String> createPaste(String code, String language) {
         return createPaste(code, language, defaultExpiryTime);
     }
 
     /**
      * Creates a new paste
      *
-     * @param code code
-     * @param language language id
+     * @param code       code
+     * @param language   language id
      * @param expiryTime time after this bin will expire
      * @return rest request
      */
-    public RestRequest<String> createPaste(String code, String language, String expiryTime)
-    {
+    public RestRequest<String> createPaste(String code, String language, String expiryTime) {
         Map<String, String> postBody = new HashMap<>();
         postBody.put("lang", language);
         postBody.put("text", code);
@@ -116,8 +115,7 @@ public final class GhostbinServer
      * @param id paste id
      * @return rest request
      */
-    public RestRequest<GhostbinPaste> retrievePaste(String id)
-    {
+    public RestRequest<GhostbinPaste> retrievePaste(String id) {
         Request request = new Request.Builder()
                 .url(baseUrl + "paste/" + id + ".json")
                 .addHeader("User-Agent", userAgent)
@@ -125,12 +123,10 @@ public final class GhostbinServer
                 .build();
 
         return new RestRequest<>(request, client, (response) -> {
-            if (response.code() == 404)
-            {
+            if (response.code() == 404) {
                 throw new IllegalArgumentException("Bin with id '" + id + "' does not exist.");
             }
-            if (response.code() != 200)
-            {
+            if (response.code() != 200) {
                 throw new RuntimeException("(THIS IS NOT A BUG) Status code not 200 ; server not responding? (THIS IS NOT A BUG)");
             }
             JSONObject object = new JSONObject(new JSONTokener(response.body().byteStream()));
@@ -144,26 +140,19 @@ public final class GhostbinServer
                     new GhostbinPaste.Language(languageObject.getString("name"), languageObject.getString("id")),
                     object.getString("expiration"),
                     object.getBoolean("encrypted")
-                    );
+            );
         });
     }
 
-    private String createFormBody(Map<String, String> fields)
-    {
+    private String createFormBody(Map<String, String> fields) {
         StringBuilder builder = new StringBuilder();
 
-        try
-        {
-            for (Map.Entry<String, String> entry : fields.entrySet())
-            {
-                builder.append('&')
-                        .append(URLEncoder.encode(entry.getKey(), "UTF-8"))
-                        .append('=')
+        try {
+            for (Map.Entry<String, String> entry : fields.entrySet()) {
+                builder.append('&').append(URLEncoder.encode(entry.getKey(), "UTF-8")).append('=')
                         .append(URLEncoder.encode(entry.getValue(), "UTF-8"));
             }
-        }
-        catch (UnsupportedEncodingException ignored)
-        {
+        } catch (UnsupportedEncodingException ignored) {
             return "";
         }
 

@@ -26,45 +26,46 @@ import com.mrivanplays.binclient.paste.Paste;
 import com.mrivanplays.binclient.paste.impl.PasteImpl;
 import com.mrivanplays.binclient.request.RequestException;
 import com.mrivanplays.binclient.request.RestRequest;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.ExecutorService;
-import okhttp3.*;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+
+import okhttp3.Dispatcher;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 /**
  * Represents a bin server, ran under the hastebin package
  */
-public final class HasteServer
-{
+public final class HasteServer {
     private OkHttpClient client;
     private String baseUrl;
     private final String userAgent;
 
-    public HasteServer()
-    {
+    public HasteServer() {
         this("https://hasteb.in/");
     }
 
-    public HasteServer(String baseUrl)
-    {
+    public HasteServer(String baseUrl) {
         this(new OkHttpClient(), baseUrl);
     }
 
-    public HasteServer(ExecutorService executor)
-    {
+    public HasteServer(ExecutorService executor) {
         this(executor, "https://hasteb.in/");
     }
 
-    public HasteServer(ExecutorService executor, String baseUrl)
-    {
+    public HasteServer(ExecutorService executor, String baseUrl) {
         this(new OkHttpClient.Builder().dispatcher(new Dispatcher(executor)).build(), baseUrl);
     }
 
-    public HasteServer(OkHttpClient client, String baseUrl)
-    {
+    public HasteServer(OkHttpClient client, String baseUrl) {
         this.client = client;
         this.userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1";
         this.baseUrl = baseUrl;
@@ -76,16 +77,14 @@ public final class HasteServer
      * @param code code
      * @return rest request
      */
-    public RestRequest<String> createPaste(String code)
-    {
+    public RestRequest<String> createPaste(String code) {
         Request request = new Request.Builder()
                 .url(baseUrl + "documents")
                 .addHeader("User-Agent", userAgent)
                 .addHeader("Content-Type", "text")
                 .post(RequestBody.create(MediaType.parse("text/plain"), code))
                 .build();
-        return new RestRequest<>(request, client, (response) ->
-        {
+        return new RestRequest<>(request, client, (response) -> {
             JSONObject object = new JSONObject(new JSONTokener(response.body().byteStream()));
             return object.getString("key");
         });
@@ -97,31 +96,24 @@ public final class HasteServer
      * @param id id
      * @return rest request
      */
-    public RestRequest<Paste> retrievePaste(String id)
-    {
+    public RestRequest<Paste> retrievePaste(String id) {
         Request request = new Request.Builder()
                 .url(baseUrl + "raw/" + id)
                 .addHeader("User-Agent", userAgent)
                 .get()
                 .build();
-        return new RestRequest<>(request, client, (response) ->
-        {
-            if (response.code() == 404)
-            {
+        return new RestRequest<>(request, client, (response) -> {
+            if (response.code() == 404) {
                 throw new IllegalArgumentException("Bin with id '" + id + "' does not exist.");
             }
-            if (response.code() != 200)
-            {
+            if (response.code() != 200) {
                 throw new RuntimeException("(THIS IS NOT A BUG) Status code not 200 ; server not responding? (THIS IS NOT A BUG)");
             }
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream())))
-            {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body().byteStream()))) {
                 StringBuilder codeBuilder = new StringBuilder();
                 reader.lines().forEach(line -> codeBuilder.append(line).append("\n"));
                 return new PasteImpl(id, codeBuilder.toString(), baseUrl + id);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 throw new RequestException("Error occurred while trying to retrieve a haste server paste", e);
             }
         });

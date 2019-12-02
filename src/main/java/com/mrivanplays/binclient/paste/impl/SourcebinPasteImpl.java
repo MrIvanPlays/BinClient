@@ -23,30 +23,27 @@
 package com.mrivanplays.binclient.paste.impl;
 
 import com.mrivanplays.binclient.paste.SourcebinPaste;
+
 import java.time.OffsetDateTime;
 
-public class SourcebinPasteImpl extends PasteImpl implements SourcebinPaste
-{
+public class SourcebinPasteImpl extends PasteImpl implements SourcebinPaste {
 
     private OffsetDateTime createdAt;
     private String ownerId;
 
-    public SourcebinPasteImpl(String id, String body, String url, OffsetDateTime createdAt, String ownerId)
-    {
+    public SourcebinPasteImpl(String id, String body, String url, OffsetDateTime createdAt, String ownerId) {
         super(id, body, url);
         this.createdAt = createdAt;
         this.ownerId = ownerId;
     }
 
     @Override
-    public OffsetDateTime getCreatedAt()
-    {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
     @Override
-    public String getOwnerId()
-    {
+    public String getOwnerId() {
         return ownerId;
     }
 }

@@ -30,22 +30,21 @@ import com.mrivanplays.binclient.servers.GhostbinServer;
 import com.mrivanplays.binclient.servers.HasteServer;
 import com.mrivanplays.binclient.servers.IvanBinServer;
 import com.mrivanplays.binclient.servers.SourcebinServer;
-import okhttp3.OkHttpClient;
+
 import org.junit.Test;
 
-public class BinTests
-{
+import okhttp3.OkHttpClient;
+
+public class BinTests {
 
     private static final OkHttpClient client;
 
-    static
-    {
+    static {
         client = new OkHttpClient();
     }
 
     @Test
-    public void testHastebin()
-    {
+    public void testHastebin() {
         HasteServer hasteServer = new HasteServer(client, "https://hasteb.in/");
         String id = hasteServer.createPaste("<h1>Hello, world!</h1>").sync();
         Paste paste = hasteServer.retrievePaste(id).sync();
@@ -55,8 +54,7 @@ public class BinTests
     }
 
     @Test
-    public void testGhostbin()
-    {
+    public void testGhostbin() {
         GhostbinServer ghostbinServer = new GhostbinServer(client, "10m", "https://paste.menudocs.org/");
         String id = ghostbinServer.createPaste("<h1>Hello, world!</h1>", "html").sync();
         GhostbinPaste paste = ghostbinServer.retrievePaste(id).sync();
@@ -70,10 +68,9 @@ public class BinTests
     }
 
     @Test
-    public void testIvanBin()
-    {
+    public void testIvanBin() {
         IvanBinServer ivanBinServer = new IvanBinServer(client);
-        String id = ivanBinServer.createPaste("System.out.println(\"Hello, world\");").sync();
+        String id = ivanBinServer.createPaste("<h1>Hello, world!</h1>").sync();
         IvanBinPaste paste = ivanBinServer.retrievePaste(id).sync();
         System.out.println(paste.getBody());
         System.out.println(paste.getId());
@@ -83,8 +80,7 @@ public class BinTests
     }
 
     @Test
-    public void testSourcebin()
-    {
+    public void testSourcebin() {
         SourcebinServer sourcebinServer = new SourcebinServer(client);
         String id = sourcebinServer.createPaste("<h1>Hello, world!</h1>").sync();
         SourcebinPaste paste = sourcebinServer.retrievePaste(id).sync();

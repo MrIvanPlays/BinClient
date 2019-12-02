@@ -23,30 +23,27 @@
 package com.mrivanplays.binclient.paste.impl;
 
 import com.mrivanplays.binclient.paste.IvanBinPaste;
+
 import java.time.OffsetDateTime;
 
-public class IvanBinPasteImpl extends PasteImpl implements IvanBinPaste
-{
+public class IvanBinPasteImpl extends PasteImpl implements IvanBinPaste {
 
     private OffsetDateTime createdAt;
     private OffsetDateTime expiresAt;
 
-    public IvanBinPasteImpl(String id, String body, String url, OffsetDateTime createdAt, OffsetDateTime expiresAt)
-    {
+    public IvanBinPasteImpl(String id, String body, String url, OffsetDateTime createdAt, OffsetDateTime expiresAt) {
         super(id, body, url);
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
     }
 
     @Override
-    public OffsetDateTime getCreatedAt()
-    {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
     @Override
-    public OffsetDateTime getExpiresAt()
-    {
+    public OffsetDateTime getExpiresAt() {
         return expiresAt;
     }
 }

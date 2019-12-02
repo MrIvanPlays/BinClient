@@ -24,15 +24,13 @@ package com.mrivanplays.binclient.paste.impl;
 
 import com.mrivanplays.binclient.paste.GhostbinPaste;
 
-public class GhostbinPasteImpl extends PasteImpl implements GhostbinPaste
-{
+public class GhostbinPasteImpl extends PasteImpl implements GhostbinPaste {
 
     private Language language;
     private String expiration;
     private boolean encrypted;
 
-    public GhostbinPasteImpl(String id, String body, String url, Language language, String expiration, boolean encrypted)
-    {
+    public GhostbinPasteImpl(String id, String body, String url, Language language, String expiration, boolean encrypted) {
         super(id, body, url);
         this.language = language;
         this.expiration = expiration;
@@ -40,20 +38,17 @@ public class GhostbinPasteImpl extends PasteImpl implements GhostbinPaste
     }
 
     @Override
-    public Language getLanguage()
-    {
+    public Language getLanguage() {
         return language;
     }
 
     @Override
-    public String getExpiration()
-    {
+    public String getExpiration() {
         return expiration;
     }
 
     @Override
-    public boolean isEncrypted()
-    {
+    public boolean isEncrypted() {
         return encrypted;
     }
 }

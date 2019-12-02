@@ -23,13 +23,11 @@
 package com.mrivanplays.binclient.request;
 
 /**
- * Represents a exception, called when something got wrong with the request.
+ * Represents a {@link RuntimeException}, called when something got wrong with specific request.
  */
-public class RequestException extends RuntimeException
-{
+public class RequestException extends RuntimeException {
 
-    public RequestException(String message, Throwable cause)
-    {
+    public RequestException(String message, Throwable cause) {
         super(message, cause);
     }
 }

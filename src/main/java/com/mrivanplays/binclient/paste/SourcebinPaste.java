@@ -27,8 +27,7 @@ import java.time.OffsetDateTime;
 /**
  * Represents a paste which is made by <a href="https://sourceb.in">sourcebin</a>
  */
-public interface SourcebinPaste extends Paste
-{
+public interface SourcebinPaste extends Paste {
 
     /**
      * Returns the time when the paste was created

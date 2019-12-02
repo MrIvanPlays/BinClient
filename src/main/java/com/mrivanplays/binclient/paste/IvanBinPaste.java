@@ -25,10 +25,10 @@ package com.mrivanplays.binclient.paste;
 import java.time.OffsetDateTime;
 
 /**
- * Represents a paste which is made by the <a href="https://github.com/MrIvanPlays/bin.mrivanplays.com">IvanBin</a> package.
+ * Represents a paste which is made by the <a href="https://github.com/MrIvanPlays/bin.mrivanplays.com">IvanBin</a>
+ * package.
  */
-public interface IvanBinPaste extends Paste
-{
+public interface IvanBinPaste extends Paste {
 
     /**
      * Returns the time, when the bin was created at.

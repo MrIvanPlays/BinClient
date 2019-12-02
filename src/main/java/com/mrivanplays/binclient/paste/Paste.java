@@ -25,8 +25,7 @@ package com.mrivanplays.binclient.paste;
 /**
  * Represents a paste
  */
-public interface Paste
-{
+public interface Paste {
 
     /**
      * Returns the id of the paste

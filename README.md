@@ -44,19 +44,15 @@ dependencies {
 ## Usage
 
 ```java
-public static void main(String[] args)
-{
+public static void main(String[] args) {
     // server can be replaced with whatever you want from the supported ones
     IvanBinServer server = new IvanBinServer();
     
     // request can be also async
-    server.createPaste("System.out.println(\"Hello, world!\");").sync(pasteId -> 
-    {
-        // do something with the paste id 
-    }, Throwable::printStackTrace);
+    String pasteId = server.createPaste("System.out.println(\"Hello, world!\");").sync();
+    // do something with paste id 
     
-    server.retrievePaste("existingPasteIdHere").async(paste -> 
-    {
+    server.retrievePaste("existingPasteIdHere").async(paste -> {
        // do something with the paste
     }, Throwable::printStackTrace);
 }

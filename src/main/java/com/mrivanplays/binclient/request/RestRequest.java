@@ -25,111 +25,85 @@ package com.mrivanplays.binclient.request;
 import java.io.IOException;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import okhttp3.*;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Represents a rest request
  *
  * @param <T> type of value, retrieved from that request
  */
-public final class RestRequest<T>
-{
+public final class RestRequest<T> {
 
     private Request request;
     private OkHttpClient client;
     private Function<Response, T> finisher;
 
-    public RestRequest(Request request, OkHttpClient client, Function<Response, T> finisher)
-    {
+    public RestRequest(Request request, OkHttpClient client, Function<Response, T> finisher) {
         this.request = request;
         this.client = client;
         this.finisher = finisher;
     }
 
     /**
-     * Calls this request synchronously (may lag)
+     * Calls this request synchronously. This may cause the main thread to freeze for a moment
      *
      * @return direct value after call
      * @throws RequestException if exception caught
      */
-    public T sync()
-    {
-        Call call = client.newCall(request);
-        try (Response response = call.execute())
-        {
-            return finisher.apply(response);
-        }
-        catch (Throwable error)
-        {
+    public T sync() {
+        return sync(error -> {
             throw new RequestException("An error occurred while trying to process synchronous request: " + request, error);
-        }
+        });
     }
 
     /**
-     * Calls this request synchronously and gives you a callback when success
+     * Calls this request synchronously and provides a exception handler. This may cause the main thread to freeze for a
+     * moment.
      *
-     * @param onSuccess on success
+     * @param onFailure exception handler
+     * @return direct value after call or onFailure given value if fail
      */
-    public void sync(Consumer<T> onSuccess)
-    {
-        sync(onSuccess, Throwable::printStackTrace);
-    }
-
-    /**
-     * Calls this request synchronously and gives you a callback when success and callback when
-     * failure happened.
-     *
-     * @param onSuccess on success
-     * @param onFailure on failure
-     */
-    public void sync(Consumer<T> onSuccess, Consumer<Throwable> onFailure)
-    {
+    public T sync(Function<Throwable, T> onFailure) {
         Call call = client.newCall(request);
-        try (Response response = call.execute())
-        {
-            onSuccess.accept(finisher.apply(response));
-        }
-        catch (Throwable error)
-        {
-            onFailure.accept(error);
+        try (Response response = call.execute()) {
+            return finisher.apply(response);
+        } catch (Throwable error) {
+            return onFailure.apply(error);
         }
     }
 
     /**
      * Calls this request asynchronously
      *
-     * @param onSuccess on success
+     * @param onSuccess callback with the value if no failure happened
      */
-    public void async(Consumer<T> onSuccess)
-    {
+    public void async(Consumer<T> onSuccess) {
         async(onSuccess, Throwable::printStackTrace);
     }
 
     /**
      * Calls this request asynchronously
      *
-     * @param onSuccess on success
-     * @param onFailure on failure
+     * @param onSuccess callback with the value if no failure happened
+     * @param onFailure exception handler
      */
-    public void async(Consumer<T> onSuccess, Consumer<Throwable> onFailure)
-    {
-        client.newCall(request).enqueue(new Callback()
-        {
+    public void async(Consumer<T> onSuccess, Consumer<Throwable> onFailure) {
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e)
-            {
+            public void onFailure(Call call, IOException e) {
                 onFailure.accept(e);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException
-            {
-                try
-                {
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
                     onSuccess.accept(finisher.apply(response));
-                }
-                catch (Throwable error)
-                {
+                } catch (Throwable error) {
                     onFailure.accept(error);
                 }
             }
